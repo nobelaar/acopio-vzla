@@ -1,5 +1,5 @@
 import { http, HttpResponse } from 'msw'
-import type { CentroAcopio, Post, PostUtil, PostComentario, ComentarioUtil } from '@/types/db'
+import type { CentroAcopio, Post, PostUtil, PostComentario, ComentarioUtil, Notificacion } from '@/types/db'
 import {
   fixtureCentro,
   fixtureCentro2,
@@ -8,6 +8,7 @@ import {
   fixturePostUtil,
   fixtureComentario,
   fixtureComentarioUtil,
+  fixtureNotificacion,
   fixtureSession,
 } from './fixtures'
 
@@ -19,6 +20,7 @@ interface Store {
   postUtils: PostUtil[]
   comentarios: PostComentario[]
   comentarioUtils: ComentarioUtil[]
+  notificaciones: Notificacion[]
 }
 
 let store: Store = makeStore()
@@ -40,6 +42,7 @@ function makeStore(): Store {
     postUtils: [structuredClone(fixturePostUtil)],
     comentarios: [structuredClone(fixtureComentario)],
     comentarioUtils: [structuredClone(fixtureComentarioUtil)],
+    notificaciones: [structuredClone(fixtureNotificacion)],
   }
 }
 
@@ -236,6 +239,24 @@ const restHandlers = [
     const { filters } = parseQuery(url)
     store.comentarioUtils = store.comentarioUtils.filter(
       (cu) => !(filters.comentario_id && cu.comentario_id === filters.comentario_id)
+    )
+    return HttpResponse.json(null, { status: 204 })
+  }),
+
+  http.get(`${BASE}/rest/v1/notificacion`, ({ request }) => {
+    const url = new URL(request.url)
+    const { filters, order } = parseQuery(url)
+    let rows = applyFilters(store.notificaciones as unknown as Record<string, unknown>[], filters)
+    if (order) rows = applyOrder(rows, order, (r) => String(r[order!.column as keyof Notificacion]))
+    const limit = url.searchParams.get('limit')
+    if (limit) rows = rows.slice(0, parseInt(limit))
+    return HttpResponse.json(rows)
+  }),
+
+  http.patch(`${BASE}/rest/v1/notificacion`, async ({ request }) => {
+    const body = (await request.json()) as Partial<Notificacion>
+    store.notificaciones = store.notificaciones.map((n) =>
+      body.leida !== undefined ? { ...n, leida: body.leida } : n
     )
     return HttpResponse.json(null, { status: 204 })
   }),

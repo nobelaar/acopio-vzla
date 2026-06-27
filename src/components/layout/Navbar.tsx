@@ -1,11 +1,15 @@
 import { Link, useLocation } from 'react-router-dom'
+import type { AuthUser } from '@/types/db'
 import { ArrowLeft, HeartHandshake } from 'lucide-react'
+import { NotificationBell } from '@/components/notificacion/NotificationBell'
 
-interface Props {}
+interface Props {
+  user?: AuthUser | null
+}
 
-export function Navbar(_props: Props) {
+export function Navbar({ user }: Props) {
   const location = useLocation()
-  const isSubPage = location.pathname !== '/' && location.pathname !== '/centros'
+  const isSubPage = location.pathname !== '/' && location.pathname !== '/centros' && location.pathname !== '/comunidad'
 
   return (
     <header className="sticky top-0 z-10 overflow-hidden border-b border-border bg-black lg:hidden">
@@ -25,6 +29,9 @@ export function Navbar(_props: Props) {
             <span className="text-[17px] font-bold tracking-tight">Acopio</span>
           </Link>
         )}
+        <div className="ml-auto">
+          <NotificationBell userId={user?.id} />
+        </div>
       </nav>
     </header>
   )

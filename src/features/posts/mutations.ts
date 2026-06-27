@@ -3,7 +3,7 @@ import { supabase } from '@/lib/supabase'
 import type { Post, PostWithUtil } from '@/types/db'
 
 export interface CrearPostInput {
-  centro_id: string
+  centro_id?: string
   contenido: string
   foto_url?: string | null
   necesidades?: string[]
@@ -16,7 +16,7 @@ export function useCrearPost() {
       const { data, error } = await supabase
         .from('posts')
         .insert({
-          centro_id: input.centro_id,
+          centro_id: input.centro_id ?? null,
           contenido: input.contenido,
           foto_url: input.foto_url ?? null,
           necesidades: input.necesidades ?? [],
@@ -27,8 +27,11 @@ export function useCrearPost() {
       return data as Post
     },
     onSuccess: (_data, variables) => {
-      qc.invalidateQueries({ queryKey: ['posts', variables.centro_id] })
+      if (variables.centro_id) {
+        qc.invalidateQueries({ queryKey: ['posts', variables.centro_id] })
+      }
       qc.invalidateQueries({ queryKey: ['posts', 'feed'] })
+      qc.invalidateQueries({ queryKey: ['posts', 'comunidad'] })
     },
   })
 }

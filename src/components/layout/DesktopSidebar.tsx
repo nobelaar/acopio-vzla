@@ -1,7 +1,8 @@
 import { NavLink } from 'react-router-dom'
 import type { AuthUser } from '@/types/db'
-import { Home, Search, PlusCircle, User, LogOut } from 'lucide-react'
+import { Home, Search, PlusCircle, User, Users, LogOut } from 'lucide-react'
 import { cn } from '@/lib/utils'
+import { NotificationBell } from '@/components/notificacion/NotificationBell'
 
 interface Props {
   user: AuthUser | null
@@ -17,6 +18,7 @@ export function DesktopSidebar({ user, onLogout }: Props) {
 
       <nav className="flex flex-1 flex-col gap-1">
         <SidebarItem to="/" icon={Home} label="Inicio" />
+        <SidebarItem to="/comunidad" icon={Users} label="Comunidad" />
         <SidebarItem to="/centros" icon={Search} label="Buscar" />
         <SidebarItem
           to={user ? '/centros/nuevo' : '/login?redirect=/centros/nuevo'}
@@ -31,14 +33,17 @@ export function DesktopSidebar({ user, onLogout }: Props) {
       </nav>
 
       {user ? (
-        <button
-          type="button"
-          onClick={onLogout}
-          className="mt-auto flex items-center gap-3 rounded-full px-4 py-3 text-[15px] text-muted-foreground hover:bg-secondary hover:text-foreground"
-        >
-          <LogOut size={22} />
-          <span>{user.email}</span>
-        </button>
+        <div className="mt-auto space-y-2">
+          <NotificationBell userId={user.id} />
+          <button
+            type="button"
+            onClick={onLogout}
+            className="flex w-full items-center gap-3 rounded-full px-4 py-3 text-[15px] text-muted-foreground hover:bg-secondary hover:text-foreground"
+          >
+            <LogOut size={22} />
+            <span>{user.email}</span>
+          </button>
+        </div>
       ) : null}
     </aside>
   )

@@ -52,6 +52,15 @@ export interface PostUtil {
   created_at: string
 }
 
+export interface Notificacion {
+  id: string
+  user_id: string
+  post_id: string
+  tipo: 'comentario'
+  leida: boolean
+  created_at: string
+}
+
 export interface ComentarioUtil {
   id: string
   comentario_id: string

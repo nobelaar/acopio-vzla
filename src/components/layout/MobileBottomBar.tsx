@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { NavLink, useLocation } from 'react-router-dom'
 import type { AuthUser } from '@/types/db'
-import { Home, Search, PlusCircle, User } from 'lucide-react'
+import { Home, Search, PlusCircle, User, Users } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { SearchOverlay } from '@/components/common/SearchOverlay'
 
@@ -20,6 +20,7 @@ export function MobileBottomBar({ user }: Props) {
       <SearchOverlay open={searchOpen} onClose={() => setSearchOpen(false)} />
       <nav className="fixed bottom-0 left-0 right-0 z-20 flex h-14 items-center justify-around border-t border-border bg-black pb-[env(safe-area-inset-bottom,0px)] lg:hidden">
         <Tab to="/" icon={Home} label="Inicio" />
+        <Tab to="/comunidad" icon={Users} label="Comunidad" />
         <button
           type="button"
           onClick={() => setSearchOpen(true)}

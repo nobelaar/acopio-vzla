@@ -10,6 +10,8 @@ import { HomePage } from '@/pages/HomePage'
 import { CentroPerfilPage } from '@/pages/CentroPerfilPage'
 import { LoginPage } from '@/pages/LoginPage'
 import { RegistroPage } from '@/pages/RegistroPage'
+import { ComunidadPage } from '@/pages/ComunidadPage'
+import { NotificacionesPage } from '@/pages/NotificacionesPage'
 import { NuevoCentroPage } from '@/pages/NuevoCentroPage'
 import { EditarCentroPage } from '@/pages/EditarCentroPage'
 import { ToastContainer } from '@/components/toast/ToastContainer'
@@ -20,10 +22,12 @@ export default function App() {
   return (
     <div className="flex min-h-screen flex-col">
       <DesktopSidebar user={user} onLogout={() => supabase.auth.signOut()} />
-      <Navbar />
+      <Navbar user={user} />
       <main className="container flex-1 pb-14 lg:ml-[275px] lg:max-w-[600px] lg:pb-0">
         <Routes>
           <Route path="/" element={<FeedPage />} />
+          <Route path="/comunidad" element={<ComunidadPage />} />
+          <Route path="/notificaciones" element={<NotificacionesPage />} />
           <Route path="/centros" element={<HomePage />} />
           <Route path="/centro/:id" element={<CentroPerfilPage user={user} />} />
           <Route path="/login" element={<LoginPage />} />
