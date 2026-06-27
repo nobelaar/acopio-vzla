@@ -8,7 +8,7 @@ import {
   fixtureSession,
 } from './fixtures'
 
-const BASE = 'https://acopio-test.supabase.co'
+const BASE = (import.meta.env.VITE_SUPABASE_URL as string) || 'https://acopio-test.supabase.co'
 
 interface Store {
   centros: CentroAcopio[]
@@ -16,9 +16,15 @@ interface Store {
 }
 
 let store: Store = makeStore()
+let requireEmailConfirm = false
 
 export function resetStore(): void {
   store = makeStore()
+  requireEmailConfirm = false
+}
+
+export function setRequireEmailConfirm(value: boolean): void {
+  requireEmailConfirm = value
 }
 
 function makeStore(): Store {
@@ -180,6 +186,16 @@ const authHandlers = [
         { status: 400 }
       )
     }
+    if (requireEmailConfirm) {
+      return HttpResponse.json(
+        {
+          code: 'email_not_confirmed',
+          message: 'Email not confirmed',
+          error_description: 'Email not confirmed',
+        },
+        { status: 400 }
+      )
+    }
     return HttpResponse.json({ ...fixtureSession, user: { ...fixtureSession.user, email: body.email } })
   }),
   http.post(`${BASE}/auth/v1/signup`, async ({ request }) => {
@@ -190,11 +206,30 @@ const authHandlers = [
         { status: 400 }
       )
     }
+    if (requireEmailConfirm) {
+      return HttpResponse.json({
+        user: { ...fixtureSession.user, email: body.email },
+        session: null,
+      })
+    }
     return HttpResponse.json({
       ...fixtureSession,
       refresh_token: 'signup-refresh',
       user: { ...fixtureSession.user, email: body.email },
     })
+  }),
+  http.post(`${BASE}/auth/v1/resend`, async ({ request }) => {
+    const body = (await request.json().catch(() => ({}))) as {
+      email?: string
+      type?: string
+    }
+    if (!body.email || (body.type && body.type !== 'signup')) {
+      return HttpResponse.json(
+        { code: 'invalid_request', error_description: 'Email requerido' },
+        { status: 400 }
+      )
+    }
+    return HttpResponse.json({ message: 'Confirmation email resent' })
   }),
 ]
 

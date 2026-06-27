@@ -4,8 +4,8 @@ import type { ReactNode } from 'react'
 import { describe, expect, it, beforeEach } from 'vitest'
 import { supabase } from '@/lib/supabase'
 import { createTestQueryClient } from '@/test/test-utils'
-import { fixtureUser } from '@/test/mocks'
-import { signIn, signUp, useSession } from './session'
+import { fixtureUser, setRequireEmailConfirm } from '@/test/mocks'
+import { signIn, signUp, resendConfirmationEmail, useSession } from './session'
 
 const wrapper = ({ children }: { children: ReactNode }) => (
   <QueryClientProvider client={createTestQueryClient()}>{children}</QueryClientProvider>
@@ -37,6 +37,25 @@ describe('signIn/signUp', () => {
 
   it('returns an error on empty signup', async () => {
     const { error } = await signUp('', '')
+    expect(error).not.toBeNull()
+  })
+
+  it('signs up and asks for email confirmation when the project has it enabled', async () => {
+    setRequireEmailConfirm(true)
+    const result = await signUp('nuevo@example.com', 'password123')
+    expect(result.error).toBeNull()
+    expect(result.needsEmailConfirm).toBe(true)
+    expect(result.email).toBe('nuevo@example.com')
+  })
+
+  it('resendConfirmationEmail resolves with no error', async () => {
+    setRequireEmailConfirm(true)
+    const { error } = await resendConfirmationEmail('nuevo@example.com')
+    expect(error).toBeNull()
+  })
+
+  it('resendConfirmationEmail reports an error on empty email', async () => {
+    const { error } = await resendConfirmationEmail('')
     expect(error).not.toBeNull()
   })
 })

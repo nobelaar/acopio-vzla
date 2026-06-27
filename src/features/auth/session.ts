@@ -2,18 +2,45 @@ import { useEffect, useState } from 'react'
 import type { AuthUser } from '@/types/db'
 import { supabase } from '@/lib/supabase'
 
-export async function signIn(email: string, password: string): Promise<{ error: string | null }> {
+export interface SignInResult {
+  error: string | null
+  needsEmailConfirm: boolean
+  email: string | null
+}
+
+export interface SignUpResult {
+  error: string | null
+  needsEmailConfirm: boolean
+  email: string | null
+}
+
+export async function signIn(email: string, password: string): Promise<SignInResult> {
   const { error } = await supabase.auth.signInWithPassword({ email, password })
-  return { error: error ? error.message : null }
+  if (error) {
+    const code = (error as { code?: string }).code ?? ''
+    const needsConfirm = code === 'email_not_confirmed' || /not confirmed/i.test(error.message)
+    return {
+      error: needsConfirm ? null : error.message,
+      needsEmailConfirm: needsConfirm,
+      email: needsConfirm ? email : null,
+    }
+  }
+  return { error: null, needsEmailConfirm: false, email }
 }
 
 export async function signUp(
   email: string,
   password: string
-): Promise<{ error: string | null; needsEmailConfirm: boolean }> {
+): Promise<SignUpResult> {
   const { data, error } = await supabase.auth.signUp({ email, password })
-  if (error) return { error: error.message, needsEmailConfirm: false }
-  return { error: null, needsEmailConfirm: data.session == null }
+  if (error) return { error: error.message, needsEmailConfirm: false, email: null }
+  return { error: null, needsEmailConfirm: data.session == null, email }
+}
+
+export async function resendConfirmationEmail(email: string): Promise<{ error: string | null }> {
+  if (!email.trim()) return { error: 'Email requerido' }
+  const { error } = await supabase.auth.resend({ type: 'signup', email })
+  return { error: error ? error.message : null }
 }
 
 export function useSession(): { user: AuthUser | null; loading: boolean } {

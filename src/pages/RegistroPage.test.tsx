@@ -5,6 +5,7 @@ import { MemoryRouter, Routes, Route, useLocation } from 'react-router-dom'
 import { describe, expect, it, beforeEach } from 'vitest'
 import { supabase } from '@/lib/supabase'
 import { createTestQueryClient } from '@/test/test-utils'
+import { setRequireEmailConfirm } from '@/test/mocks'
 import { RegistroPage } from './RegistroPage'
 
 function renderRegistroPage() {
@@ -51,5 +52,46 @@ describe('RegistroPage', () => {
   it('has a link back to the login page', () => {
     renderRegistroPage()
     expect(screen.getByRole('link', { name: /iniciar sesión|entrar/i })).toHaveAttribute('href', '/login')
+  })
+
+  it('shows a confirmation screen when the project requires email confirmation', async () => {
+    setRequireEmailConfirm(true)
+    const user = userEvent.setup()
+    renderRegistroPage()
+    await user.type(screen.getByLabelText(/email|correo/i), 'nuevo2@example.com')
+    await user.type(screen.getByLabelText(/contraseña|password/i), 'password123')
+    await user.click(screen.getByRole('button', { name: /registr|crear cuenta/i }))
+    await waitFor(() =>
+      expect(screen.getByText(/hemos enviado|correo de confirmación/i)).toBeInTheDocument()
+    )
+    expect(screen.getByText('nuevo2@example.com')).toBeInTheDocument()
+    await waitFor(() =>
+      expect(screen.getByRole('link', { name: /iniciar sesión|entrar/i })).toBeInTheDocument()
+    )
+    expect(screen.queryByLabelText(/email|correo/i)).not.toBeInTheDocument()
+  })
+
+  it('lets the user resend the confirmation email from the confirmation screen', async () => {
+    setRequireEmailConfirm(true)
+    const user = userEvent.setup()
+    renderRegistroPage()
+    await user.type(screen.getByLabelText(/email|correo/i), 'nuevo3@example.com')
+    await user.type(screen.getByLabelText(/contraseña|password/i), 'password123')
+    await user.click(screen.getByRole('button', { name: /registr|crear cuenta/i }))
+    const resend = await screen.findByRole('button', { name: /reenviar/i })
+    await user.click(resend)
+    await waitFor(() => expect(screen.getByText(/reenviado|enviamos otro|ya te lo enviamos de nuevo/i)).toBeInTheDocument())
+  })
+
+  it('lets the user go back to the form (edit) from the confirmation screen', async () => {
+    setRequireEmailConfirm(true)
+    const user = userEvent.setup()
+    renderRegistroPage()
+    await user.type(screen.getByLabelText(/email|correo/i), 'nuevo4@example.com')
+    await user.type(screen.getByLabelText(/contraseña|password/i), 'password123')
+    await user.click(screen.getByRole('button', { name: /registr|crear cuenta/i }))
+    const back = await screen.findByRole('button', { name: /regresar|modificar|volver/i })
+    await user.click(back)
+    await waitFor(() => expect(screen.getByLabelText(/email|correo/i)).toBeInTheDocument())
   })
 })

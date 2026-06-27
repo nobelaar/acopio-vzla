@@ -28,11 +28,12 @@ Dos documentos en `/docs` son la fuente de verdad del producto y la arquitectura
 ### 1. Prerequisitos
 
 - [Bun](https://bun.sh) >= 1.1
-- [Supabase CLI](https://supabase.com/docs/guides/local-development/cli/getting-started) >= 2
-  - `brew install supabase/tap/supabase` ( macOS )
-  - `npm install -g supabase` ( alternativa )
-  - `bunx supabase --version` para verificar
 - Un proyecto en [Supabase](https://supabase.com) ( plan free alcanza )
+
+> El **Supabase CLI** viene incluido como `devDependency` (`supabase@^2`):
+> `bun install` lo baja a `node_modules/.bin/supabase`, así que los scripts
+> `bun run supabase:*` lo usan automáticamente. No hace falta instalarlo global.
+> Verificá con `bunx supabase --version`.
 
 ### 2. Instalar dependencias
 
@@ -63,7 +64,7 @@ El schema vive en `supabase/migrations/` y se versiona. El flujo recomendado:
 
 ```bash
 # 1) Autenticar el CLI ( una sola vez )
-supabase login
+bunx supabase login    # abre el browser del dashboard
 
 # 2) Linkar el repo local con tu proyecto remoto
 #    ( ref = https://app.supabase.com/project/<ref>/settings/general )
@@ -105,7 +106,14 @@ select
 -- Esperado: extensiones=2, tablas=2, rpc=1
 ```
 
-#### Workflow de evolución del schema
+#### Confirmación de email ( Auth )
+
+Supabase viene con **confirmación de email habilitada por defecto**. El flujo de la app ya lo contempla:
+
+- **Registro** → si el proyecto exige confirmación, la app muestra una pantalla **"Revisá tu correo"** con el email del usuario, un botón **Reenviar correo** y un enlace para modificar los datos. Si el proyecto tiene confirmación desactivada, loguea y navega a `/` directamente.
+- **Login** → si intentás entrar sin haber confirmado el correo, la app te avisa **"Confirmá tu correo"** y te deja reenviar el enlace desde la misma pantalla.
+
+El `config.toml` del CLI local ya trae `enable_confirmations = true`. Para tu proyecto remoto, verificá que esté activado en **Dashboard → Authentication → Providers → Email → Confirm email**.
 
 Cuando cambies el modelo (añadir una columna, ajustar una política, etc.):
 
