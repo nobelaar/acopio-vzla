@@ -12,7 +12,7 @@ export function Navbar({ user }: Props) {
   const isSubPage = location.pathname !== '/' && location.pathname !== '/centros' && location.pathname !== '/comunidad'
 
   return (
-    <header className="sticky top-0 z-10 overflow-hidden border-b border-border bg-black lg:hidden">
+    <header className="sticky top-0 z-10 border-b border-border bg-black lg:hidden">
       <nav className="flex h-11 items-center px-4">
         {isSubPage ? (
           <div className="flex items-center gap-3">
