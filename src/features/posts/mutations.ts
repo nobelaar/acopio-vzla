@@ -64,7 +64,7 @@ export function useToggleUtil() {
       } else {
         const { error } = await supabase
           .from('post_util')
-          .insert({ post_id: postId, user_id: userId })
+          .upsert({ post_id: postId, user_id: userId }, { onConflict: 'post_id, user_id' })
         if (error) throw error
       }
     },

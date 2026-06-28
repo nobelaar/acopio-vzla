@@ -56,6 +56,7 @@ export interface Notificacion {
   id: string
   user_id: string
   post_id: string
+  centro_id: string | null
   tipo: 'comentario'
   leida: boolean
   created_at: string

@@ -10,7 +10,7 @@ interface Props {
 export function NotificacionItem({ notificacion, onRead }: Props) {
   return (
     <Link
-      to={`/centro/${notificacion.post_id}`}
+      to={notificacion.centro_id ? `/centro/${notificacion.centro_id}` : '/'}
       onClick={onRead}
       className="block border-b border-border px-4 py-3 transition-colors hover:bg-secondary/50"
     >

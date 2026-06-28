@@ -43,7 +43,7 @@ export function useToggleComentarioUtil() {
       } else {
         const { error } = await supabase
           .from('comentario_util')
-          .insert({ comentario_id: comentarioId, user_id: user.id })
+          .upsert({ comentario_id: comentarioId, user_id: user.id }, { onConflict: 'comentario_id, user_id' })
         if (error) throw error
       }
     },

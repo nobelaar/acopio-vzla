@@ -93,6 +93,7 @@ export const fixtureNotificacion: Notificacion = {
   id: 'nnnnnnnn-0000-0000-0000-000000000001',
   user_id: fixtureUser.id,
   post_id: fixturePost.id,
+  centro_id: fixtureCentro.id,
   tipo: 'comentario',
   leida: false,
   created_at: '2025-01-12T14:00:00.000Z',
