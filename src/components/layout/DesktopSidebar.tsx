@@ -35,7 +35,7 @@ export function DesktopSidebar({ user, onLogout }: Props) {
 
       {user ? (
         <div className="mt-auto space-y-2">
-          <NotificationBell userId={user.id} />
+          <NotificationBell userId={user.id} expandUp />
           <ThemeToggle />
           <button
             type="button"

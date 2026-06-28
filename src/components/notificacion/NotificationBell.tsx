@@ -6,9 +6,10 @@ import { NotificacionItem } from './NotificacionItem'
 
 interface Props {
   userId: string | undefined
+  expandUp?: boolean
 }
 
-export function NotificationBell({ userId }: Props) {
+export function NotificationBell({ userId, expandUp }: Props) {
   const [open, setOpen] = useState(false)
   const ref = useRef<HTMLDivElement>(null)
   const { data: notificaciones = [] } = useNotificaciones(userId)
@@ -50,7 +51,10 @@ export function NotificationBell({ userId }: Props) {
       </button>
 
       {open && (
-        <div className="absolute right-0 top-full z-20 mt-1 w-80 overflow-hidden rounded-2xl border border-border bg-background shadow-xl">
+        <div className={expandUp
+          ? 'absolute right-0 bottom-full z-20 mb-1 w-80 overflow-hidden rounded-2xl border border-border bg-background shadow-xl'
+          : 'absolute right-0 top-full z-20 mt-1 w-80 overflow-hidden rounded-2xl border border-border bg-background shadow-xl'
+        }>
           <div className="border-b border-border px-4 py-3">
             <span className="text-[15px] font-bold">Notificaciones</span>
           </div>
