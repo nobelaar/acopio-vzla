@@ -22,7 +22,7 @@ export const PostCard = memo(function PostCard({ post, centroNombre, centroCiuda
   const { user } = useSession()
   const [commentsOpen, setCommentsOpen] = useState(false)
   const [showAllComments, setShowAllComments] = useState(false)
-  const { data: comentarios = [] } = useComentarios(post.id, commentsOpen)
+  const { data: comentarios = [] } = useComentarios(post.id, true)
 
   function handleUtil() {
     toggleUtil.mutate(
