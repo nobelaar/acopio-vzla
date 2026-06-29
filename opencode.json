@@ -1,0 +1,23 @@
+{
+  "$schema": "https://opencode.ai/config.json",
+  "instructions": ["AGENTS.md"],
+  "permissions": {
+    "allow": [
+      "bun run test",
+      "bun run test:watch",
+      "bun run test:coverage",
+      "bun run lint",
+      "bun run build",
+      "bun run dev",
+      "bun run postinstall",
+      "bun run supabase:push",
+      "bun run supabase:diff *",
+      "bun run supabase:types",
+      "bunx supabase *",
+      "bunx lefthook *",
+      "bun install",
+      "bun add *",
+      "bun remove *"
+    ]
+  }
+}
