@@ -11,7 +11,7 @@ import { Button } from '@/components/ui/button'
 import { cn } from '@/lib/utils'
 import type { PostWithUtil, AnuncioWithUtil, FeedItem } from '@/types/db'
 
-type Tab = 'todo' | 'acopio' | 'hospedaje'
+type Tab = 'todo' | 'acopio' | 'hospedaje' | 'transporte'
 
 function mergeFeed(
   posts: PostWithUtil[],
@@ -42,11 +42,11 @@ function mergeFeed(
 export function FeedPage() {
   const [tab, setTab] = useState<Tab>('todo')
   const showPosts = tab === 'todo' || tab === 'acopio'
-  const showAnuncios = tab === 'todo' || tab === 'hospedaje'
+  const showAnuncios = tab === 'todo' || tab === 'hospedaje' || tab === 'transporte'
 
   const postsQuery = useInfinitePostsFeed()
   const anunciosQuery = useInfiniteAnuncios(
-    tab === 'hospedaje' ? 'hospedaje' : undefined
+    tab === 'hospedaje' ? 'hospedaje' : tab === 'transporte' ? 'transporte' : undefined
   )
   const { data: centros = [] } = useCentros()
 
@@ -105,6 +105,7 @@ export function FeedPage() {
             ['todo', 'Todo'],
             ['acopio', 'Posts'],
             ['hospedaje', 'Hospedaje'],
+            ['transporte', 'Transporte'],
           ] as const
         ).map(([key, label]) => (
           <button

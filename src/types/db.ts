@@ -90,7 +90,7 @@ export interface PostWithUtil extends Post {
   user_has_util: boolean
 }
 
-export type AnuncioTipo = 'hospedaje'
+export type AnuncioTipo = 'hospedaje' | 'transporte'
 
 export interface Anuncio {
   id: string
@@ -108,6 +108,9 @@ export interface Anuncio {
   accesibilidad: boolean
   activo: boolean
   created_at: string
+  destino: string | null
+  tipo_carga: 'personas' | 'insumos' | 'ambos' | null
+  tipo_vehiculo: 'carro' | 'camioneta' | 'camion' | 'moto' | null
 }
 
 export interface AnuncioWithUtil extends Anuncio {

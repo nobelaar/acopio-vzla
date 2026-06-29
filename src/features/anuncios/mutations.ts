@@ -1,9 +1,9 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { supabase } from '@/lib/supabase'
-import type { Anuncio, AnuncioWithUtil } from '@/types/db'
+import type { Anuncio, AnuncioWithUtil, AnuncioTipo } from '@/types/db'
 
 export interface CrearAnuncioInput {
-  tipo: 'hospedaje'
+  tipo: AnuncioTipo
   titulo: string
   descripcion: string
   ciudad: string
@@ -15,6 +15,9 @@ export interface CrearAnuncioInput {
   duracion?: string | null
   mascotas?: boolean
   accesibilidad?: boolean
+  destino?: string | null
+  tipo_carga?: 'personas' | 'insumos' | 'ambos' | null
+  tipo_vehiculo?: 'carro' | 'camioneta' | 'camion' | 'moto' | null
 }
 
 export function useCrearAnuncio() {
@@ -36,6 +39,9 @@ export function useCrearAnuncio() {
           duracion: input.duracion ?? null,
           mascotas: input.mascotas ?? false,
           accesibilidad: input.accesibilidad ?? false,
+          destino: input.destino ?? null,
+          tipo_carga: input.tipo_carga ?? null,
+          tipo_vehiculo: input.tipo_vehiculo ?? null,
         })
         .select()
         .single()

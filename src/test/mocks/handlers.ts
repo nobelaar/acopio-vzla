@@ -10,7 +10,7 @@ import {
   fixtureComentarioUtil,
   fixtureNotificacion,
   fixtureSession,
-  fixtureAnuncio, fixtureAnuncio2, fixtureAnuncioUtil,
+  fixtureAnuncio, fixtureAnuncio2, fixtureAnuncioUtil, fixtureAnuncioTransporte,
 } from './fixtures'
 
 const BASE = (import.meta.env.VITE_SUPABASE_URL as string) || 'https://acopio-test.supabase.co'
@@ -46,7 +46,7 @@ function makeStore(): Store {
     comentarios: [structuredClone(fixtureComentario)],
     comentarioUtils: [structuredClone(fixtureComentarioUtil)],
     notificaciones: [structuredClone(fixtureNotificacion)],
-    anuncios: [structuredClone(fixtureAnuncio), structuredClone(fixtureAnuncio2)],
+    anuncios: [structuredClone(fixtureAnuncio), structuredClone(fixtureAnuncio2), structuredClone(fixtureAnuncioTransporte)],
     anuncioUtils: [structuredClone(fixtureAnuncioUtil)],
   }
 }
@@ -276,6 +276,9 @@ const restHandlers = [
       duracion: payload.duracion ?? null,
       mascotas: payload.mascotas ?? false,
       accesibilidad: payload.accesibilidad ?? false,
+      destino: payload.destino ?? null,
+      tipo_carga: payload.tipo_carga ?? null,
+      tipo_vehiculo: payload.tipo_vehiculo ?? null,
       activo: true,
       created_at: new Date().toISOString(),
     }

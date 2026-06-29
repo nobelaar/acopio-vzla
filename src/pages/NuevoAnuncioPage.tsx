@@ -3,9 +3,10 @@ import { useNavigate } from 'react-router-dom'
 import { useCrearAnuncio } from '@/features/anuncios/mutations'
 import { useCentros } from '@/features/centros/queries'
 import { Button } from '@/components/ui/button'
-import { DURACION_OPCIONES, CAPACIDAD_OPCIONES } from '@/lib/constants'
+import { DURACION_OPCIONES, CAPACIDAD_OPCIONES, TIPO_CARGA_OPCIONES, TIPO_VEHICULO_OPCIONES } from '@/lib/constants'
+import { cn } from '@/lib/utils'
 import { ChevronLeft } from 'lucide-react'
-import type { AuthUser } from '@/types/db'
+import type { AuthUser, AnuncioTipo } from '@/types/db'
 
 interface Props {
   user: AuthUser | null
@@ -25,6 +26,10 @@ export function NuevoAnuncioPage({ user }: Props) {
   const [duracion, setDuracion] = useState('')
   const [mascotas, setMascotas] = useState(false)
   const [accesibilidad, setAccesibilidad] = useState(false)
+  const [destino, setDestino] = useState('')
+  const [tipoCarga, setTipoCarga] = useState<string>('')
+  const [tipoVehiculo, setTipoVehiculo] = useState<string>('')
+  const [tipo, setTipo] = useState<AnuncioTipo>('hospedaje')
   const [centroId, setCentroId] = useState<string | null>(null)
   const [error, setError] = useState<string | null>(null)
 
@@ -51,7 +56,7 @@ export function NuevoAnuncioPage({ user }: Props) {
     setError(null)
     crearAnuncio.mutate(
       {
-        tipo: 'hospedaje',
+        tipo,
         titulo: titulo.trim(),
         descripcion: descripcion.trim(),
         ciudad: ciudad.trim(),
@@ -67,6 +72,9 @@ export function NuevoAnuncioPage({ user }: Props) {
         duracion: duracion || null,
         mascotas,
         accesibilidad,
+        destino: destino.trim() || null,
+        tipo_carga: (tipoCarga || null) as 'personas' | 'insumos' | 'ambos' | null,
+        tipo_vehiculo: (tipoVehiculo || null) as 'carro' | 'camioneta' | 'camion' | 'moto' | null,
       },
       { onSuccess: () => navigate('/') }
     )
@@ -88,6 +96,22 @@ export function NuevoAnuncioPage({ user }: Props) {
           <ChevronLeft size={20} />
         </button>
         <span className="text-[17px] font-bold">Nuevo anuncio</span>
+      </div>
+
+      <div className="flex border-b border-border">
+        {(['hospedaje', 'transporte'] as const).map((t) => (
+          <button
+            key={t}
+            type="button"
+            onClick={() => setTipo(t)}
+            className={cn(
+              'flex-1 py-2.5 text-[14px] font-medium text-muted-foreground transition-colors',
+              tipo === t && 'text-foreground border-b-2 border-primary font-bold'
+            )}
+          >
+            {t === 'hospedaje' ? '🏠 Hospedaje' : '🚚 Transporte'}
+          </button>
+        ))}
       </div>
 
       <form onSubmit={handleSubmit} className="space-y-4 px-4 py-4">
@@ -194,9 +218,62 @@ export function NuevoAnuncioPage({ user }: Props) {
         </div>
 
         <div className="border-t border-border pt-3">
-          <p className="mb-3 text-[13px] font-semibold text-muted-foreground">
-            Detalles del hospedaje
-          </p>
+          {tipo === 'hospedaje' && (
+            <p className="mb-3 text-[13px] font-semibold text-muted-foreground">
+              Detalles del hospedaje
+            </p>
+          )}
+          {tipo === 'transporte' && (
+            <p className="mb-3 text-[13px] font-semibold text-muted-foreground">
+              Detalles del transporte
+            </p>
+          )}
+
+          {tipo === 'transporte' && (
+            <div className="space-y-3 mb-3">
+              <div className="space-y-1">
+                <label className="text-[13px] font-medium">Destino</label>
+                <input
+                  type="text"
+                  value={destino}
+                  onChange={(e) => setDestino(e.target.value)}
+                  placeholder="ej: Valencia"
+                  className="w-full rounded-md border border-border bg-background px-3 py-2 text-[15px] text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary"
+                />
+              </div>
+              <div className="space-y-1">
+                <label className="text-[13px] font-medium">Tipo de carga</label>
+                <select
+                  value={tipoCarga}
+                  onChange={(e) => setTipoCarga(e.target.value)}
+                  className="w-full rounded-md border border-border bg-background px-3 py-2 text-[15px] focus:outline-none focus:ring-2 focus:ring-primary"
+                >
+                  <option value="">Seleccionar</option>
+                  {TIPO_CARGA_OPCIONES.map((tc) => (
+                    <option key={tc} value={tc}>
+                      {tc === 'personas' ? 'Personas' : tc === 'insumos' ? 'Insumos' : 'Ambos'}
+                    </option>
+                  ))}
+                </select>
+              </div>
+              <div className="space-y-1">
+                <label className="text-[13px] font-medium">Tipo de vehiculo</label>
+                <select
+                  value={tipoVehiculo}
+                  onChange={(e) => setTipoVehiculo(e.target.value)}
+                  className="w-full rounded-md border border-border bg-background px-3 py-2 text-[15px] focus:outline-none focus:ring-2 focus:ring-primary"
+                >
+                  <option value="">Seleccionar</option>
+                  {TIPO_VEHICULO_OPCIONES.map((tv) => (
+                    <option key={tv} value={tv}>
+                      {tv.charAt(0).toUpperCase() + tv.slice(1)}
+                    </option>
+                  ))}
+                </select>
+              </div>
+            </div>
+          )}
+
           <div className="grid grid-cols-2 gap-3">
             <div className="space-y-1">
               <label className="text-[13px] font-medium">Capacidad</label>
@@ -233,26 +310,28 @@ export function NuevoAnuncioPage({ user }: Props) {
             </div>
           </div>
 
-          <div className="mt-3 space-y-2">
-            <label className="flex items-center gap-2">
-              <input
-                type="checkbox"
-                checked={mascotas}
-                onChange={(e) => setMascotas(e.target.checked)}
-                className="h-4 w-4 rounded border-border"
-              />
-              <span className="text-[14px]">Acepta mascotas</span>
-            </label>
-            <label className="flex items-center gap-2">
-              <input
-                type="checkbox"
-                checked={accesibilidad}
-                onChange={(e) => setAccesibilidad(e.target.checked)}
-                className="h-4 w-4 rounded border-border"
-              />
-              <span className="text-[14px]">Accesible (silla de ruedas)</span>
-            </label>
-          </div>
+          {tipo === 'hospedaje' && (
+            <div className="mt-3 space-y-2">
+              <label className="flex items-center gap-2">
+                <input
+                  type="checkbox"
+                  checked={mascotas}
+                  onChange={(e) => setMascotas(e.target.checked)}
+                  className="h-4 w-4 rounded border-border"
+                />
+                <span className="text-[14px]">Acepta mascotas</span>
+              </label>
+              <label className="flex items-center gap-2">
+                <input
+                  type="checkbox"
+                  checked={accesibilidad}
+                  onChange={(e) => setAccesibilidad(e.target.checked)}
+                  className="h-4 w-4 rounded border-border"
+                />
+                <span className="text-[14px]">Accesible (silla de ruedas)</span>
+              </label>
+            </div>
+          )}
         </div>
 
         <Button

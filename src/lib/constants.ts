@@ -36,7 +36,12 @@ export const DEFAULT_FALLBACK_PHOTO =
 
 export const ANUNCIO_TIPO_META: Record<AnuncioTipo, { emoji: string; label: string; color: string }> = {
   hospedaje: { emoji: '🏠', label: 'Hospedaje', color: '#10B981' },
+  transporte: { emoji: '🚚', label: 'Transporte', color: '#F59E0B' },
 } as const
+
+export const TIPO_CARGA_OPCIONES = ['personas', 'insumos', 'ambos'] as const
+
+export const TIPO_VEHICULO_OPCIONES = ['carro', 'camioneta', 'camion', 'moto'] as const
 
 export const DURACION_OPCIONES = [
   '1 semana',

@@ -117,6 +117,9 @@ export const fixtureAnuncio: Anuncio = {
   accesibilidad: false,
   activo: true,
   created_at: '2025-01-13T10:00:00.000Z',
+  destino: null,
+  tipo_carga: null,
+  tipo_vehiculo: null,
 }
 
 export const fixtureAnuncio2: Anuncio = {
@@ -135,6 +138,9 @@ export const fixtureAnuncio2: Anuncio = {
   accesibilidad: true,
   activo: true,
   created_at: '2025-01-13T14:00:00.000Z',
+  destino: null,
+  tipo_carga: null,
+  tipo_vehiculo: null,
 }
 
 export const fixtureAnuncioUtil: AnuncioUtil = {
@@ -142,4 +148,25 @@ export const fixtureAnuncioUtil: AnuncioUtil = {
   anuncio_id: fixtureAnuncio.id,
   user_id: fixtureUser.id,
   created_at: '2025-01-13T11:00:00.000Z',
+}
+
+export const fixtureAnuncioTransporte: Anuncio = {
+  id: 'aaaaaaaa-0000-0000-0000-000000000003',
+  tipo: 'transporte',
+  titulo: 'Transporto insumos de Caracas a Valencia',
+  descripcion: 'Camioneta disponible. Puedo llevar cajas y agua.',
+  ciudad: 'Caracas',
+  zona: 'El Hatillo',
+  contacto: '0412-9999999',
+  centro_id: null,
+  user_id: fixtureUser.id,
+  capacidad: 200,
+  duracion: '3-4 horas',
+  mascotas: false,
+  accesibilidad: false,
+  activo: true,
+  created_at: '2025-01-14T08:00:00.000Z',
+  destino: 'Valencia',
+  tipo_carga: 'insumos',
+  tipo_vehiculo: 'camioneta',
 }

@@ -112,6 +112,28 @@ export const AnuncioCard = memo(function AnuncioCard({
         )}
       </div>
 
+      {anuncio.tipo === 'transporte' && (
+        <div className="flex flex-wrap items-center gap-3 text-[13px] text-muted-foreground">
+          {anuncio.destino && (
+            <span>→ {anuncio.destino}</span>
+          )}
+          {anuncio.tipo_carga && (
+            <span className="inline-flex items-center gap-1">
+              <span>
+                {anuncio.tipo_carga === 'personas' ? '👥' : anuncio.tipo_carga === 'insumos' ? '📦' : '👥📦'}
+              </span>{' '}
+              {anuncio.tipo_carga.charAt(0).toUpperCase() + anuncio.tipo_carga.slice(1)}
+            </span>
+          )}
+          {anuncio.tipo_vehiculo && (
+            <span className="inline-flex items-center gap-1">
+              <span>🚛</span>{' '}
+              {anuncio.tipo_vehiculo.charAt(0).toUpperCase() + anuncio.tipo_vehiculo.slice(1)}
+            </span>
+          )}
+        </div>
+      )}
+
       <div className="mt-2 flex items-center gap-6">
         <button
           type="button"
