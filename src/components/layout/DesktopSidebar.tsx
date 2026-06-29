@@ -57,7 +57,7 @@ export function DesktopSidebar({ user, onLogout }: Props) {
                   className="flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-left text-[15px] hover:bg-secondary"
                 >
                   <Megaphone size={20} />
-                  <span>Anuncio de hospedaje</span>
+                  <span>Anuncio</span>
                 </button>
                 <button
                   type="button"
